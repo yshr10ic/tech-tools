@@ -95,6 +95,9 @@
           <v-btn color="grey white--text" @click="clear">
             CLEAR
           </v-btn>
+          <v-btn color="blue-grey white--text" @click="toCsv">
+            CSV
+          </v-btn>
         </v-card-actions>
       </v-card>
 
@@ -193,6 +196,41 @@ export default {
       this.creationNumber = "10"
 
       this.passwordList = []
+    },
+
+    toCsv() {
+      if (this.passwordList.length === 0) {
+        alert('Please to csv after generate password')
+        return
+      }
+
+      const today = new Date()
+      const year = today.getFullYear()
+      const month = ("0" + (today.getMonth() + 1)).slice(-2)
+      const day = ("0" + today.getDate()).slice(-2)
+      const hour = ("0" + today.getHours()).slice(-2)
+      const minute = ("0" + today.getMinutes()).slice(-2)
+      const second = ("0" + today.getSeconds()).slice(-2)
+      const filename = `password_${year}${month}${day}${hour}${minute}${second}.csv`
+
+      let csv = []
+      for(let i = 0; i < this.passwordList.length; i++) {
+        csv.push(this.passwordList[i].item1)
+        csv.push(this.passwordList[i].item2)
+        csv.push(this.passwordList[i].item3)
+        csv.push(this.passwordList[i].item4)
+        csv.push(this.passwordList[i].item5)
+      }
+      csv = csv.join('\n');
+
+      const UTF_8_BOM = '%EF%BB%BF';
+      const data = 'data:text/csv;charset=utf-8,' + UTF_8_BOM + encodeURIComponent(csv);
+      let element = document.createElement('a');
+      element.href = data;
+      element.setAttribute('download', filename);
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
     }
   }
 }
